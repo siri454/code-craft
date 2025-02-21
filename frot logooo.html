@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Craft Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+        .heading {
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            color: #ff0095;
+            text-shadow: 2px 2px 10px rgba(255, 0, 149, 0.5);
+        }
+        .container {
+            background: #1e1e1e;
+            padding: 30px;
+            box-shadow: 0px 0px 20px rgba(0, 225, 255, 0.4);
+            border-radius: 15px;
+            display: inline-block;
+            width: 90%;
+            max-width: 500px;
+            transition: transform 0.4s ease-in-out;
+        }
+        input {
+            width: 85%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #00e1ff;
+            border-radius: 25px;
+            text-align: center;
+            font-size: 16px;
+            background: #262626;
+            color: white;
+            outline: none;
+        }
+        button {
+            background-color: #00e1ff;
+            color: #121212;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #008db3;
+            transform: scale(1.05);
+        }
+            #logo-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-top: 15px;
+            box-shadow: 0px 0px 15px rgba(0, 225, 255, 0.4);
+        }
+        .hidden {
+            display: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Interface 1: Welcome Screen -->
+    <div id="interface1" class="container fade-in">
+        <h1 class="heading">✨ Customizable Logos Instantly ✨</h1>
+        <p>Create unique logos in seconds. Click below to start!</p>
+        <button onclick="switchInterface('interface2')">Start</button>
+    </div>
+
+    <!-- Interface 2: Prompt Input -->
+    <div id="interface2" class="container hidden fade-in">
+        <h2>Enter Your Logo Description</h2>
+        <input type="text" id="prompt" placeholder="Enter your logo idea...">
+        <button onclick="generateLogo()">Generate Logo</button>
+        <br><br>
+        <button onclick="switchInterface('interface1')">Back</button>
+    </div>
+
+    <!-- Interface 3: Logo Display -->
+    <div id="interface3" class="container hidden fade-in">
+        <h2>Your Generated Logo</h2>
+        <div id="logo-container"></div>
+        <br>
+        <button onclick="switchInterface('interface2')">Generate Another</button>
+    </div>
+
+    <script>
+        function generateLogo() {
+            let prompt = document.getElementById("prompt").value.trim();
+            if (prompt === "") {
+                alert("Please enter a description!");
+                return;
+            }
+
+            // Dummy logo generation - Replace with actual AI-generated logos
+            let logoUrl = fetch("http://127.0.0.1:5000/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: prompt })
+})
+.then(response => response.json())
+.then(data => {
+    if (data.logo_url) {
+        document.getElementById("logo-container").innerHTML = `
+            <img src="http://127.0.0.1:5000/${data.logo_url}" alt="Generated Logo">
+        `;
+    } else {
+        alert("Failed to generate logo. Try again!");
+    }
+})
+.catch(error => console.error("Error:", error));
+
+
+            document.getElementById("logo-container").innerHTML = `
+                <img src="${logoUrl}" alt="Generated Logo">
+            `;
+
+            // Switch to logo display interface
+            switchInterface("interface3");
+        }
+
+        function switchInterface(interfaceId) {
+            document.getElementById("interface1").classList.add("hidden");
+            document.getElementById("interface2").classList.add("hidden");
+            document.getElementById("interface3").classList.add("hidden");
+            document.getElementById(interfaceId).classList.remove("hidden");
+        }
+    </script>
+
+</body>
+</html>
